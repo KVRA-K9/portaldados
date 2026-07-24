@@ -105,6 +105,7 @@ export function DashboardBannerTabs({
           >
             <Link
               href={`/${dashboard.slug}/metadados`}
+              prefetch
               className={cn(glassButton, compact && COMPACT_BTN)}
             >
               <Database className={compact ? "size-3.5" : "size-4"} aria-hidden="true" />

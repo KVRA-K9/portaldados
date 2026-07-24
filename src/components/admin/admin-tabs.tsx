@@ -111,6 +111,7 @@ export function AdminTabs({ tabs }: { tabs: AdminTab[] }) {
             >
               <Link
                 href={tab.href}
+                prefetch
                 aria-current={isActive ? "page" : undefined}
                 onClick={() => setOptimisticIndex(index)}
                 className={cn(

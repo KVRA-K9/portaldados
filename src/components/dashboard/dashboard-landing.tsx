@@ -53,7 +53,7 @@ export function DashboardLanding({ dashboardSlug }: { dashboardSlug: string }) {
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Button asChild size="lg" variant="secondary">
-                <Link href={`/${config.slug}/microdados`}>
+                <Link href={`/${config.slug}/microdados`} prefetch>
                   Acessar microdados
                   <ArrowRight className="size-4" aria-hidden="true" />
                 </Link>
@@ -93,6 +93,7 @@ export function DashboardLanding({ dashboardSlug }: { dashboardSlug: string }) {
           ))}
           <Link
             href={`/${config.slug}/microdados`}
+            prefetch
             className="ml-auto inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium whitespace-nowrap text-primary hover:underline"
           >
             Microdados
@@ -193,7 +194,7 @@ export function DashboardLanding({ dashboardSlug }: { dashboardSlug: string }) {
             </p>
           </div>
           <Button asChild size="lg" variant="secondary">
-            <Link href={`/${config.slug}/microdados`}>
+            <Link href={`/${config.slug}/microdados`} prefetch>
               Acessar microdados
               <ArrowRight className="size-4" aria-hidden="true" />
             </Link>

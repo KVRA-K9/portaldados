@@ -59,6 +59,7 @@ export function DashboardBannerCard({
         <div className={cn("flex flex-wrap", compact ? "gap-1.5" : "gap-2")}>
           <Link
             href={`/${dashboard.slug}/metadados`}
+            prefetch
             className={cn(glassButton, compact && COMPACT_BTN)}
           >
             <Database className={compact ? "size-3.5" : "size-4"} aria-hidden="true" />
