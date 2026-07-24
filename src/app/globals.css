@@ -361,6 +361,30 @@
   animation: tab-fade 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+/* Logo "sendo construído" no carregamento do admin: sobre uma cópia esmaecida do logo,
+   a versão cheia é revelada de baixo para cima, em loop (ver src/app/admin/(dashboard)/loading.tsx). */
+@keyframes logo-build {
+  0% {
+    clip-path: inset(100% 0 0 0);
+    opacity: 0.85;
+  }
+  55% {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+  }
+  80% {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+  }
+  100% {
+    clip-path: inset(0 0 0 0);
+    opacity: 0;
+  }
+}
+.logo-build-fill {
+  animation: logo-build 1.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -372,7 +396,8 @@
   }
   .animate-fade-up,
   .animate-fade-in,
-  .tab-fade {
+  .tab-fade,
+  .logo-build-fill {
     animation: none !important;
   }
 }
