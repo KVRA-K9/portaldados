@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { getActiveSession } from "@/lib/auth-guards";
 import { prisma } from "@/lib/prisma";
-import { getDashboardBySlug } from "@/lib/dashboards/queries";
+import { getDashboardBySlug, dashboardEntriesTag } from "@/lib/dashboards/queries";
 
 /** Desfaz uma importação: remove os registros daquele lote e o próprio lote. */
 export async function DELETE(
@@ -44,6 +44,8 @@ export async function DELETE(
   revalidatePath(`/admin/${dashboardSlug}/importar`);
   revalidatePath(`/${dashboardSlug}/metadados`);
   revalidatePath(`/${dashboardSlug}/microdados`);
+  // Expira já, para a exclusão do lote refletir na hora nas páginas públicas.
+  revalidateTag(dashboardEntriesTag(dashboardSlug), { expire: 0 });
 
   return NextResponse.json({ removedRows: removed });
 }

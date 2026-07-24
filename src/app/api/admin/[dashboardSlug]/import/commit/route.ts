@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { getActiveSession } from "@/lib/auth-guards";
 import { prisma } from "@/lib/prisma";
-import { getDashboardBySlug } from "@/lib/dashboards/queries";
+import { getDashboardBySlug, dashboardEntriesTag } from "@/lib/dashboards/queries";
 import { budgetEntryImportRowSchema, type BudgetEntryImportRow } from "@/lib/schemas/budget-entry";
 
 export type ImportMode = "replace-years" | "append";
@@ -117,6 +117,9 @@ export async function POST(
   revalidatePath(`/admin/${dashboardSlug}/importar`);
   revalidatePath(`/${dashboardSlug}/metadados`);
   revalidatePath(`/${dashboardSlug}/microdados`);
+  // { expire: 0 } expira já: o próximo acesso à metadados/microdados pega o dado recém-importado
+  // (o "max" serviria o dado antigo uma vez, o que não convém logo após uma importação).
+  revalidateTag(dashboardEntriesTag(dashboardSlug), { expire: 0 });
 
   return NextResponse.json({
     importBatchId: result.batch.id,
