@@ -141,6 +141,8 @@ export default function HomePage() {
             <span>© {ano} Governo do Estado do Acre · Uso institucional</span>
             <Link
               href="/admin/login"
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 hover:text-foreground"
             >
               <Lock className="size-3.5" aria-hidden="true" />

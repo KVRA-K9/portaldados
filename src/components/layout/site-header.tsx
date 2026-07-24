@@ -45,7 +45,7 @@ export function SiteHeader() {
             ))}
           </nav>
           <Button asChild variant="outline" size="sm" className="hidden gap-1.5 md:inline-flex">
-            <Link href="/admin/login">
+            <Link href="/admin/login" target="_blank" rel="noopener noreferrer">
               <Lock className="size-3.5" aria-hidden="true" />
               Acesso administrativo
             </Link>
@@ -63,7 +63,7 @@ export function SiteHeader() {
                 </DropdownMenuItem>
               ))}
               <DropdownMenuItem asChild>
-                <Link href="/admin/login">
+                <Link href="/admin/login" target="_blank" rel="noopener noreferrer">
                   <Lock className="size-3.5" aria-hidden="true" />
                   Acesso administrativo
                 </Link>
