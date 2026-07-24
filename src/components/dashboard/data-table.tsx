@@ -122,7 +122,9 @@ export function DataTable({
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-between py-2 text-xs text-muted-foreground">
+      {/* Fundo na cor do orçamento (var --accent-surface da paleta ativa, igual ao painel
+          de filtros); acompanha automaticamente cada orçamento. */}
+      <div className="flex items-center justify-between gap-2 rounded-lg border border-[var(--accent-surface-border,#bda878)] bg-[var(--accent-surface,#d6c292)] px-3 py-2 text-xs text-[var(--accent-surface-foreground,#241d10)] shadow-sm">
         <span>
           Página {table.getState().pagination.pageIndex + 1} de{" "}
           {Math.max(table.getPageCount(), 1)} — {data.length} registros

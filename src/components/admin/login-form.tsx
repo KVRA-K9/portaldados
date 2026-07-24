@@ -27,6 +27,48 @@ import { loginSchema, type LoginInput } from "@/lib/schemas/login";
 /** E-mail do último acesso, para preencher o formulário neste navegador. */
 const SHORTCUT_EMAIL_KEY = "portal-dados:atalho-email";
 
+/** Preferência do diálogo do atalho neste navegador, para não repeti-lo a cada login:
+ *  { decision, until } — `until` é o instante (ms) até quando NÃO perguntar de novo. */
+const SHORTCUT_PREF_KEY = "portal-dados:atalho-pref";
+const DAY_MS = 24 * 60 * 60 * 1000;
+/** "Não salvar": só volta a perguntar no dia seguinte. */
+const SKIP_SILENCE_MS = 1 * DAY_MS;
+/** "Salvar": só volta a perguntar depois de 7 dias (mesmo prazo da sessão salva). */
+const SAVE_SILENCE_MS = 7 * DAY_MS;
+
+type ShortcutPref = { decision: "save" | "skip"; until: number };
+
+function readShortcutPref(): ShortcutPref | null {
+  try {
+    const raw = window.localStorage.getItem(SHORTCUT_PREF_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as ShortcutPref;
+    if (
+      parsed &&
+      typeof parsed.until === "number" &&
+      (parsed.decision === "save" || parsed.decision === "skip")
+    ) {
+      return parsed;
+    }
+  } catch {
+    // Valor corrompido: ignora e volta a perguntar.
+  }
+  return null;
+}
+
+function writeShortcutPref(decision: "save" | "skip", silenceMs: number) {
+  const pref: ShortcutPref = { decision, until: Date.now() + silenceMs };
+  window.localStorage.setItem(SHORTCUT_PREF_KEY, JSON.stringify(pref));
+}
+
+/** Estado do atalho neste navegador, já considerando o prazo de silêncio.
+ *  `withinSilence`: ainda não é hora de perguntar. `keepSaved`: manter a sessão de 7 dias. */
+function getShortcutState(): { withinSilence: boolean; keepSaved: boolean } {
+  const pref = readShortcutPref();
+  const withinSilence = pref !== null && Date.now() < pref.until;
+  return { withinSilence, keepSaved: withinSilence && pref?.decision === "save" };
+}
+
 export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -57,13 +99,17 @@ export function LoginForm() {
     router.refresh();
   }
 
-  // Entra com sessão curta (12 h) e só então pergunta sobre o atalho.
   async function onSubmit(data: LoginInput) {
     setAuthError(null);
+
+    // Dentro do período de silêncio, não repetimos o diálogo: aplicamos a última escolha
+    // da pessoa neste navegador — sessão de 7 dias se ela salvou, 12 h se não.
+    const { withinSilence, keepSaved } = getShortcutState();
+
     const result = await signIn("credentials", {
       email: data.email,
       password: data.password,
-      remember: "false",
+      remember: keepSaved ? "true" : "false",
       redirect: false,
     });
 
@@ -72,21 +118,32 @@ export function LoginForm() {
       return;
     }
 
+    // Ainda no prazo de silêncio: segue direto, sem perguntar de novo.
+    if (withinSilence) {
+      if (keepSaved) window.localStorage.setItem(SHORTCUT_EMAIL_KEY, data.email);
+      goToDestination();
+      return;
+    }
+
+    // Primeira entrada (ou prazo expirado): pergunta sobre o atalho.
     setAskShortcut(true);
   }
 
-  /** "Sim": refaz o login com sessão de 7 dias e guarda o e-mail neste navegador. */
+  /** "Sim": refaz o login com sessão de 7 dias, guarda o e-mail e silencia o diálogo por 7 dias. */
   async function saveShortcut() {
     setSavingShortcut(true);
     const { email, password } = getValues();
     await signIn("credentials", { email, password, remember: "true", redirect: false });
     window.localStorage.setItem(SHORTCUT_EMAIL_KEY, email);
+    writeShortcutPref("save", SAVE_SILENCE_MS);
     setAskShortcut(false);
     goToDestination();
   }
 
+  /** "Não salvar" (ou fechar o diálogo): silencia o diálogo até o dia seguinte. */
   function skipShortcut() {
     window.localStorage.removeItem(SHORTCUT_EMAIL_KEY);
+    writeShortcutPref("skip", SKIP_SILENCE_MS);
     setAskShortcut(false);
     goToDestination();
   }

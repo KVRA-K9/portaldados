@@ -123,7 +123,7 @@ export default function PortalPage() {
               </Reveal>
               <div className="mt-8 grid gap-6 md:grid-cols-3">
                 {DESTAQUES.map((item, i) => (
-                  <Reveal key={item.title} delay={i * 90} className="h-full">
+                  <Reveal key={item.title} delay={i * 55} className="h-full">
                     <div
                       className="relative flex h-full flex-col overflow-hidden rounded-xl p-5 ring-1 ring-institutional-gold/30 backdrop-blur-md transition duration-300 hover:-translate-y-1 hover:shadow-xl"
                       style={{
@@ -169,7 +169,7 @@ export default function PortalPage() {
                     .map(getDashboardConfig)
                     .filter((config): config is NonNullable<typeof config> => Boolean(config));
                   return (
-                    <Reveal key={dashboard.slug} delay={i * 90} className="h-full">
+                    <Reveal key={dashboard.slug} delay={i * 55} className="h-full">
                       {companions.length > 0 ? (
                         <DashboardBannerTabs tabs={[dashboard, ...companions]} />
                       ) : (

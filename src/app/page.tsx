@@ -124,7 +124,7 @@ export default function HomePage() {
                   .filter((config): config is NonNullable<typeof config> => Boolean(config));
                 return (
                   <li key={dashboard.slug}>
-                    <Reveal delay={i * 90}>
+                    <Reveal delay={i * 55}>
                       {companions.length > 0 ? (
                         <DashboardBannerTabs tabs={[dashboard, ...companions]} compact />
                       ) : (

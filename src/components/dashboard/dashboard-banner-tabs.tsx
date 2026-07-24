@@ -35,8 +35,14 @@ export function DashboardBannerTabs({
 
   return (
     <article className="group relative h-full overflow-hidden rounded-xl ring-1 ring-black/5 transition duration-300 hover:-translate-y-1 hover:shadow-xl">
+      {/* Camada base: gradiente constante atrás da foto — evita um "flash" transparente
+          durante o crossfade quando a aba muda. */}
+      <div className="absolute inset-0" style={{ background: FALLBACK_GRADIENT }} aria-hidden="true" />
+      {/* A `key` pela aba ativa remonta esta camada a cada troca, disparando o crossfade
+          (.tab-fade) da nova imagem sobre o gradiente base. */}
       <div
-        className="absolute inset-0 transition-transform duration-500 ease-out group-hover:scale-105"
+        key={dashboard.slug}
+        className="tab-fade absolute inset-0 transition-transform duration-500 ease-out group-hover:scale-105"
         style={
           dashboard.bannerImage
             ? {
@@ -92,7 +98,11 @@ export function DashboardBannerTabs({
           >
             {title}
           </h3>
-          <div className={cn("flex flex-wrap", compact ? "gap-1.5" : "gap-2")}>
+          {/* Crossfade dos botões (que mudam de destino/estado conforme a aba ativa). */}
+          <div
+            key={dashboard.slug}
+            className={cn("tab-fade flex flex-wrap", compact ? "gap-1.5" : "gap-2")}
+          >
             <Link
               href={`/${dashboard.slug}/metadados`}
               className={cn(glassButton, compact && COMPACT_BTN)}
