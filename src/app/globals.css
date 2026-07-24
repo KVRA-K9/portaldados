@@ -1,26 +1,361 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-sans);
   --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-sans);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-institutional: var(--institutional);
+  --color-institutional-dark: var(--institutional-dark);
+  --color-institutional-foreground: var(--institutional-foreground);
+  --color-institutional-gold: var(--institutional-gold);
+  --color-status-good: var(--status-good);
+  --color-status-warning: var(--status-warning);
+  --color-status-serious: var(--status-serious);
+  --color-status-critical: var(--status-critical);
+  --color-theme-climatico: var(--theme-climatico);
+  --color-theme-climatico-foreground: var(--theme-climatico-foreground);
+  --color-theme-crianca-adolescente: var(--theme-crianca-adolescente);
+  --color-theme-crianca-adolescente-foreground: var(
+    --theme-crianca-adolescente-foreground
+  );
+  --color-theme-genero: var(--theme-genero);
+  --color-theme-genero-foreground: var(--theme-genero-foreground);
+  --color-theme-etnico-racial: var(--theme-etnico-racial);
+  --color-theme-etnico-racial-foreground: var(--theme-etnico-racial-foreground);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root {
+  --background: #fcfcfb;
+  --foreground: #0b0b0b;
+  --card: #ffffff;
+  --card-foreground: #0b0b0b;
+  --popover: #ffffff;
+  --popover-foreground: #0b0b0b;
+  --primary: #004927;
+  --primary-foreground: #ffffff;
+  --secondary: #f2f4f0;
+  --secondary-foreground: #0b0b0b;
+  --muted: #f2f4f0;
+  --muted-foreground: #52514e;
+  --accent: #e6f0ea;
+  --accent-foreground: #00381e;
+  --destructive: #d03b3b;
+  --border: #e1e0d9;
+  --input: #e1e0d9;
+  --ring: #004927;
+  /* Cor institucional (verde SEPLAN / Governo do Acre) — usada de forma consistente em heros e faixas */
+  --institutional: #004927;
+  --institutional-dark: #00351c;
+  --institutional-foreground: #ffffff;
+  --institutional-gold: #f2b705;
+  /* Fixed categorical order (dataviz skill): blue, green, magenta, yellow, aqua */
+  --chart-1: #2a78d6;
+  --chart-2: #008300;
+  --chart-3: #e87ba4;
+  --chart-4: #eda100;
+  --chart-5: #1baf7a;
+  --radius: 0.5rem;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #0b0b0b;
+  --sidebar-primary: #004927;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #e6f0ea;
+  --sidebar-accent-foreground: #00381e;
+  --sidebar-border: #e1e0d9;
+  --sidebar-ring: #004927;
+  /* Status palette (fixed, never themed) */
+  --status-good: #0ca30c;
+  --status-warning: #fab219;
+  --status-serious: #ec835a;
+  --status-critical: #d03b3b;
+  /* Per-dashboard accent themes */
+  --theme-climatico: #008300;
+  --theme-climatico-foreground: #ffffff;
+  --theme-crianca-adolescente: #eda100;
+  --theme-crianca-adolescente-foreground: #241a00;
+  --theme-genero: #4a3aa7;
+  --theme-genero-foreground: #ffffff;
+  --theme-etnico-racial: #b5651d;
+  --theme-etnico-racial-foreground: #ffffff;
+}
+
+.dark {
+  --background: #1a1a19;
+  --foreground: #ffffff;
+  --card: #202020;
+  --card-foreground: #ffffff;
+  --popover: #202020;
+  --popover-foreground: #ffffff;
+  --primary: #2f9e63;
+  --primary-foreground: #04140b;
+  --secondary: #2c2c2a;
+  --secondary-foreground: #ffffff;
+  --muted: #2c2c2a;
+  --muted-foreground: #c3c2b7;
+  --accent: #123a24;
+  --accent-foreground: #cdeddb;
+  --destructive: #e66767;
+  --border: rgba(255, 255, 255, 0.1);
+  --input: rgba(255, 255, 255, 0.15);
+  --ring: #2f9e63;
+  --institutional: #005c31;
+  --institutional-dark: #00351c;
+  --institutional-foreground: #ffffff;
+  --institutional-gold: #f2b705;
+  --chart-1: #3987e5;
+  --chart-2: #008300;
+  --chart-3: #d55181;
+  --chart-4: #c98500;
+  --chart-5: #199e70;
+  --sidebar: #202020;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #2f9e63;
+  --sidebar-primary-foreground: #04140b;
+  --sidebar-accent: #123a24;
+  --sidebar-accent-foreground: #cdeddb;
+  --sidebar-border: rgba(255, 255, 255, 0.1);
+  --sidebar-ring: #2f9e63;
+  --status-good: #0ca30c;
+  --status-warning: #fab219;
+  --status-serious: #ec835a;
+  --status-critical: #e66767;
+  --theme-climatico: #008300;
+  --theme-climatico-foreground: #ffffff;
+  --theme-crianca-adolescente: #c98500;
+  --theme-crianca-adolescente-foreground: #0b0b0b;
+  --theme-genero: #9085e9;
+  --theme-genero-foreground: #0b0b0b;
+  --theme-etnico-racial: #d08a4e;
+  --theme-etnico-racial-foreground: #0b0b0b;
+}
+
+/* ---------- Paletas por orçamento temático ----------
+   Superfícies e realces das páginas de metadados e microdados, harmonizados com a
+   imagem de fundo de cada painel. Aplicadas via `paletteClass` no registry. */
+.palette-climatico {
+  --card: #e6fcd9;
+  --border: #c6e5be;
+  --muted: #d6f3c9;
+  --accent-surface: #bfedbe;
+  --accent-surface-hover: #ade0ac;
+  --accent-surface-border: #a2d6a1;
+  --accent-surface-foreground: #14280f;
+  --accent-surface-muted: #27401f;
+  --scrim: rgb(230 252 217 / 0.35);
+}
+
+.dark .palette-climatico {
+  --card: #182415;
+  --border: #2b3a26;
+  --muted: #22301e;
+  --scrim: rgb(26 26 25 / 0.55);
+}
+
+.palette-crianca-adolescente {
+  --card: #fff1cf;
+  --border: #ecd9ab;
+  --muted: #f7e3b6;
+  --accent-surface: #d6c292;
+  --accent-surface-hover: #c9b381;
+  --accent-surface-border: #bda878;
+  --accent-surface-foreground: #241d10;
+  --accent-surface-muted: #3a2f1a;
+  --scrim: rgb(255 241 207 / 0.35);
+}
+
+.dark .palette-crianca-adolescente {
+  --card: #2a2418;
+  --border: #3d3423;
+  --muted: #3a3122;
+  --scrim: rgb(26 26 25 / 0.55);
+}
+
+.palette-genero {
+  --card: #e0d1ed;
+  --border: #c9b4db;
+  --muted: #d6c3e6;
+  --accent-surface: #b380cc;
+  --accent-surface-hover: #a370bd;
+  --accent-surface-border: #9a67b4;
+  --accent-surface-foreground: #21102b;
+  --accent-surface-muted: #331a42;
+  --scrim: rgb(224 209 237 / 0.35);
+}
+
+.dark .palette-genero {
+  --card: #241b2b;
+  --border: #3b2f47;
+  --muted: #2e2438;
+  --scrim: rgb(26 26 25 / 0.55);
+}
+
+.palette-etnico-racial {
+  /* Fundo das seções (header, eixos, microdados): tom terroso #7a6a53, com texto claro
+     para contraste. Realce (cards de resumo e botões outline): tom areia #d9ceb2. */
+  --card: #7a6a53;
+  --card-foreground: #ffffff;
+  --foreground: #ffffff;
+  --muted-foreground: rgb(255 255 255 / 0.85);
+  --border: #6b5c47;
+  --muted: #6f6049;
+  --accent-surface: #d9ceb2;
+  --accent-surface-hover: #ccc0a0;
+  --accent-surface-border: #c7ba98;
+  --accent-surface-foreground: #2b2417;
+  --accent-surface-muted: #5c4f3a;
+  --scrim: rgb(122 106 83 / 0.35);
+}
+
+.dark .palette-etnico-racial {
+  --scrim: rgb(26 26 25 / 0.55);
+}
+
+/* Superfície de vidro sobre fotografia (cartões do painel administrativo), na mesma
+   linguagem dos cartões de destaque do portal. Além do fundo, redefine os tokens de
+   cor no escopo do elemento: formulários, tabelas e botões dentro dela foram feitos
+   para superfícies claras e passam a ler sobre o vidro escuro sem alteração própria. */
+.glass-surface {
+  background: linear-gradient(135deg, rgb(15 23 42 / 0.58) 0%, rgb(2 6 23 / 0.62) 100%);
+  backdrop-filter: blur(12px);
+  --foreground: #ffffff;
+  --background: rgb(255 255 255 / 0.1);
+  --card: transparent;
+  --card-foreground: #ffffff;
+  --muted: rgb(255 255 255 / 0.08);
+  --muted-foreground: rgb(255 255 255 / 0.72);
+  --secondary: rgb(255 255 255 / 0.12);
+  --secondary-foreground: #ffffff;
+  --accent: rgb(255 255 255 / 0.12);
+  --accent-foreground: #ffffff;
+  --border: rgb(255 255 255 / 0.18);
+  --input: rgb(255 255 255 / 0.28);
+  color: var(--foreground);
+}
+
+/* Sombra sutil para texto sobre fotografia/fundo escuro — melhora o contraste de leitura. */
+.text-readable {
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.5);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans scroll-smooth;
+    /* Reserva a barra de rolagem: sem isso a página desloca quando um menu do Radix
+       trava a rolagem (Select, Dropdown, Dialog). */
+    scrollbar-gutter: stable;
+  }
+  /* Ao abrir um menu, o Radix trava a rolagem e compensa a barra com padding no body.
+     Como o espaço já está reservado acima, essa compensação empurraria o conteúdo —
+     por isso é anulada. */
+  body[data-scroll-locked] {
+    padding-right: 0 !important;
+    margin-right: 0 !important;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ---------- Animações ---------- */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Revelação ao entrar na viewport (usada pelo componente <Reveal />). */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Entrada imediata (conteúdo acima da dobra). */
+.animate-fade-up {
+  animation: fade-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.animate-fade-in {
+  animation: fade-in 0.6s ease both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .animate-fade-up,
+  .animate-fade-in {
+    animation: none !important;
+  }
 }

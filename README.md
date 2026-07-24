@@ -20,6 +20,39 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Acesso ao painel administrativo
+
+O painel fica em `/admin` e usa e-mail + senha.
+
+1. **Primeiro administrador**: definido em `SEED_ADMIN_EMAIL` / `SEED_ADMIN_PASSWORD` e criado por
+   `npx prisma db seed`. É a única conta que nasce fora do produto.
+2. **Demais servidores**: o administrador abre a aba **Usuários**, informa nome, e-mail
+   institucional e perfil. O sistema gera uma **senha provisória, exibida uma única vez** — copie e
+   entregue ao servidor.
+3. **Perfis**: `Administrador` importa planilhas e gerencia contas; `Servidor (editor)` importa
+   planilhas, mas não vê a aba de usuários.
+4. **Primeiro acesso**: cada servidor deve abrir **Minha conta** e trocar a senha provisória por uma
+   que só ele conheça — a provisória é conhecida por quem cadastrou.
+5. **Esqueceu a senha**: o administrador usa *Redefinir senha* e entrega a nova senha provisória. A
+   anterior deixa de valer na hora.
+6. **Saída do setor**: use *Desativar* em vez de excluir — a conta perde o acesso e o histórico de
+   quem importou cada planilha é preservado.
+
+## Atualização dos dados
+
+Os microdados de cada orçamento vêm da planilha oficial exportada do respectivo dashboard
+interativo. Na aba do orçamento, envie o arquivo, confira o **Painel de checagens** e importe:
+
+- **Substituir exercício** (padrão): apaga os registros dos exercícios contidos na planilha e
+  regrava tudo a partir do arquivo — reenviar o mesmo arquivo corrige os dados sem duplicar;
+- **Mesclar**: acrescenta as linhas aos registros já publicados;
+- o **histórico** registra arquivo, autor e data, e permite desfazer um envio.
+
+As colunas esperadas de cada orçamento ficam em `src/lib/import/profiles.ts`, que também alimenta o
+dicionário de dados e as colunas publicadas — mudou a planilha, ajuste o perfil.
+
+Para a carga inicial pelo terminal: `npm run import:clima` e `npm run import:ocad`.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
