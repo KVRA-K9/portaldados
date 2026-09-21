@@ -1,11 +1,10 @@
 import Link from "next/link";
-import { Database } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { glassButton } from "./button-styles";
 import type { DashboardConfig } from "@/lib/dashboards/types";
 
 /** Botões menores na variante compacta (acesso rápido da home). */
-const COMPACT_BTN = "px-2 py-1 text-xs";
+const COMPACT_BTN = "px-3 py-1.5 text-sm";
 
 /** Gradiente de fundo quando o orçamento não tem imagem de banner. */
 const FALLBACK_GRADIENT = "linear-gradient(135deg, #0f5132 0%, #04271a 100%)";
@@ -57,7 +56,7 @@ export function DashboardBannerCard({
         <h3
           className={cn(
             "text-readable font-semibold text-white text-balance",
-            compact ? "text-base" : "text-xl sm:text-2xl"
+            compact ? "text-lg sm:text-xl" : "text-xl sm:text-2xl"
           )}
         >
           {compact ? dashboard.shortName : dashboard.name}
@@ -68,7 +67,6 @@ export function DashboardBannerCard({
             prefetch
             className={cn(glassButton, compact && COMPACT_BTN)}
           >
-            <Database className={compact ? "size-3.5" : "size-4"} aria-hidden="true" />
             Acessar Metadados
           </Link>
         </div>

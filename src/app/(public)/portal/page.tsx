@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, Database, Download, FileText } from "lucide-react";
-import { getDashboardConfig } from "@/lib/dashboards/registry";
+import { ArrowLeft, Database, Download, FileText } from "lucide-react";
+import { getDashboardConfig, allDashboards } from "@/lib/dashboards/registry";
 import { Reveal } from "@/components/ui/reveal";
+import { DashboardBannerCard } from "@/components/dashboard/dashboard-banner-card";
+import { DashboardBannerTabs } from "@/components/dashboard/dashboard-banner-tabs";
 import { glassButton } from "@/components/dashboard/button-styles";
 
 export const metadata: Metadata = {
@@ -12,8 +14,8 @@ export const metadata: Metadata = {
 // As fotos dos painéis vêm do registry (`bannerImage`) e são renderizadas por
 // DashboardBannerCard, compartilhado com a home.
 
-// Faixas de fundo da "Visão Geral": as três imagens dos orçamentos, na ordem
-// em que os cartões aparecem em /portal/paineis.
+// Faixas de fundo da "Visão Geral": as três imagens dos orçamentos; cada faixa
+// oferece o acesso direto aos metadados do orçamento correspondente.
 const GALERIA = [
   "orcamento-climatico",
   "orcamento-crianca-adolescente",
@@ -95,10 +97,6 @@ export default function PortalPage() {
                   <ArrowLeft className="size-4" aria-hidden="true" />
                   Voltar à página inicial
                 </Link>
-                <Link href="/portal/paineis" className={glassButton}>
-                  <ArrowRight className="size-4" aria-hidden="true" />
-                  Acessar Painéis Temáticos
-                </Link>
               </div>
               <h2 className="mt-6 text-3xl font-semibold tracking-tight text-institutional-gold sm:text-4xl">
                 Visão Geral
@@ -158,29 +156,72 @@ export default function PortalPage() {
             </div>
           </div>
 
-          {/* Faixa 3 — consolidação e reuso sobre a imagem do orçamento Sensível ao Gênero */}
-          <div className="relative overflow-hidden">
-            <div className="absolute inset-0" style={imagemFundo(GALERIA[2])} aria-hidden="true" />
-            <div
-              className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/40 to-black/30"
-              aria-hidden="true"
-            />
-            <div className="relative mx-auto flex min-h-[78vh] max-w-[1440px] items-center px-4 py-14 sm:px-6">
-              <Reveal className="max-w-3xl">
-                {/* Sem caixa: texto direto sobre a foto, com sombra para leitura. */}
-                <p className="text-lg text-justify text-white drop-shadow-md text-readable sm:text-xl">
-                  Os dados são consolidados pela equipe técnica do Departamento a partir da
-                  planilha oficial de cada orçamento e atualizados a cada nova consolidação,
-                  assegurando a fidelidade às fontes primárias.
-                </p>
-                <p className="mt-4 text-lg text-justify text-white drop-shadow-md text-readable sm:text-xl">
-                  Constituem dados públicos, de livre reutilização, recomendando-se a citação da
-                  fonte e a preservação de seu conteúdo original.
-                </p>
-              </Reveal>
-            </div>
-          </div>
         </section>
+
+        {/* Consolidação e reuso + Painéis: a imagem das mulheres veste as duas regiões
+            de uma vez — uma foto só, sem recomeço na emenda. O véu é contínuo, mais
+            escuro no ponto de encontro com a faixa anterior e clareando até o fim
+            da página. */}
+        <div className="relative">
+          <div className="absolute inset-0" style={imagemFundo(GALERIA[2])} aria-hidden="true" />
+          <div
+            className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/30"
+            aria-hidden="true"
+          />
+          <div className="relative mx-auto flex min-h-[78vh] max-w-[1440px] items-center px-4 py-14 sm:px-6">
+              <div className="max-w-3xl">
+                {/* Título no mesmo padrão dos demais ("Visão Geral", "Painéis"). */}
+                <h2 className="text-3xl font-semibold tracking-tight text-institutional-gold sm:text-4xl">
+                  Consolidação
+                </h2>
+                <Reveal className="mt-10">
+                  {/* Sem caixa: texto direto sobre a foto, com sombra para leitura. */}
+                  <p className="text-lg text-justify text-white drop-shadow-md text-readable sm:text-xl">
+                    Os dados são consolidados pela equipe técnica do Departamento a partir da
+                    planilha oficial de cada orçamento e atualizados a cada nova consolidação,
+                    assegurando a fidelidade às fontes primárias.
+                  </p>
+                  <p className="mt-4 text-lg text-justify text-white drop-shadow-md text-readable sm:text-xl">
+                    Constituem dados públicos, de livre reutilização, recomendando-se a citação da
+                    fonte e a preservação de seu conteúdo original.
+                  </p>
+                </Reveal>
+              </div>
+          </div>
+
+          {/* Painéis: acesso rápido a cada orçamento, com os mesmos cartões compactos
+              da home, um abaixo do outro. Alinhado à esquerda no contêiner largo de
+              1440px — o mesmo encadear das faixas do Sobre —, com a coluna dos cartões
+              alargada (até 4xl) para a foto e os botões respirarem, sem ultrapassar a
+              proporção dos textos ao lado. */}
+          <section id="paineis" className="relative border-b">
+            <div className="relative mx-auto max-w-[1440px] px-4 py-14 sm:px-6">
+              <h2 className="text-3xl font-semibold tracking-tight text-institutional-gold sm:text-4xl">
+                Painéis
+              </h2>
+              <ul className="mt-3 max-w-4xl space-y-3">
+                {allDashboards.map((dashboard, i) => {
+                  // Com orçamentos correlatos (companionSlugs), o cartão vira abas — assim
+                  // o Étnico-Racial fica acessível aqui, como na home.
+                  const companions = (dashboard.companionSlugs ?? [])
+                    .map(getDashboardConfig)
+                    .filter((config): config is NonNullable<typeof config> => Boolean(config));
+                  return (
+                    <li key={dashboard.slug}>
+                      <Reveal delay={i * 55}>
+                        {companions.length > 0 ? (
+                          <DashboardBannerTabs tabs={[dashboard, ...companions]} compact />
+                        ) : (
+                          <DashboardBannerCard dashboard={dashboard} compact />
+                        )}
+                      </Reveal>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          </section>
+        </div>
       </div>
     </div>
   );
