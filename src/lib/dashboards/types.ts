@@ -93,6 +93,12 @@ export type DashboardConfig = {
   dashboardUrl?: string;
   /** Imagem de fundo (banner) do orçamento, em /public. Usada nos painéis e metadados. */
   bannerImage?: string;
+  /** Posição do recorte do banner (CSS background-position, ex.: "center 70%"),
+   *  para enquadrar o ponto de interesse da foto. Padrão: "center". */
+  bannerPosition?: string;
+  /** Prefixo de filtro CSS do banner (ex.: "url(#aquarela)") para o visual de
+   *  desenho/aquarela. Padrão: sem filtro. */
+  bannerFilter?: string;
   /** Classe de paleta definida em globals.css (ex.: "palette-climatico"). Sem ela, as
    *  páginas usam as cores padrão do tema. */
   paletteClass?: string;

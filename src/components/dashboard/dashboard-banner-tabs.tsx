@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Database, LayoutDashboard } from "lucide-react";
+import { Database } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { glassButton, glassButtonDisabled } from "./button-styles";
+import { glassButton } from "./button-styles";
 import type { DashboardConfig } from "@/lib/dashboards/types";
 
 /** Botões menores na variante compacta (acesso rápido da home). */
@@ -29,7 +29,6 @@ export function DashboardBannerTabs({
 }) {
   const [active, setActive] = useState(0);
   const dashboard = tabs[active] ?? tabs[0];
-  const emConstrucao = dashboard.status === "construcao";
   // Título fixo do conjunto (ex.: "Gênero e Étnico-Racial"); na falta, o da aba ativa.
   const title = tabs[0]?.tabsTitle ?? dashboard.name;
 
@@ -42,26 +41,32 @@ export function DashboardBannerTabs({
           (.tab-fade) da nova imagem sobre o gradiente base. */}
       <div
         key={dashboard.slug}
-        className="tab-fade absolute inset-0 transition-transform duration-500 ease-out group-hover:scale-105"
+        className={cn(
+          "tab-fade absolute transition-transform duration-500 ease-out group-hover:scale-105",
+          dashboard.bannerFilter ? "-inset-4" : "inset-0"
+        )}
         style={
           dashboard.bannerImage
             ? {
                 backgroundImage: `url(${dashboard.bannerImage})`,
                 backgroundSize: "cover",
-                backgroundPosition: "center",
+                backgroundPosition: dashboard.bannerPosition ?? "center",
+                filter: [dashboard.bannerFilter, "saturate(1.08) contrast(1.05)"]
+                  .filter(Boolean)
+                  .join(" "),
               }
             : { background: FALLBACK_GRADIENT }
         }
         aria-hidden="true"
       />
       <div
-        className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/25"
+        className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/15"
         aria-hidden="true"
       />
       <div
         className={cn(
           "relative flex flex-col",
-          compact ? "min-h-[104px] gap-2 p-3.5" : "min-h-[240px] gap-4 p-5"
+          compact ? "min-h-[104px] gap-2 p-3.5" : "min-h-[280px] gap-4 p-5 sm:min-h-[360px]"
         )}
       >
         {/* Abas: escolhem qual orçamento o cartão apresenta. */}
@@ -109,27 +114,8 @@ export function DashboardBannerTabs({
               className={cn(glassButton, compact && COMPACT_BTN)}
             >
               <Database className={compact ? "size-3.5" : "size-4"} aria-hidden="true" />
-              Metadados
+              Acessar Metadados
             </Link>
-            {dashboard.dashboardUrl ? (
-              <a
-                href={dashboard.dashboardUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={cn(glassButton, compact && COMPACT_BTN)}
-              >
-                <LayoutDashboard className={compact ? "size-3.5" : "size-4"} aria-hidden="true" />
-                {compact ? "Dashboard" : "Dashboard interativo"}
-              </a>
-            ) : emConstrucao ? (
-              <span
-                className={cn(glassButtonDisabled, compact && COMPACT_BTN)}
-                aria-disabled="true"
-              >
-                <LayoutDashboard className={compact ? "size-3.5" : "size-4"} aria-hidden="true" />
-                {compact ? "Em construção" : "Dashboard em construção"}
-              </span>
-            ) : null}
           </div>
         </div>
       </div>

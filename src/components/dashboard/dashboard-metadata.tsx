@@ -258,9 +258,9 @@ export async function DashboardMetadata({
 
       <div className="flex flex-wrap gap-3">
         <Button asChild variant="outline" size="sm" className={`gap-1.5 ${sandOutlineButton}`}>
-          <Link href="/portal#paineis">
+          <Link href="/portal/paineis">
             <ArrowLeft className="size-4" aria-hidden="true" />
-            Voltar para Orçamentos
+            Voltar aos Painéis
           </Link>
         </Button>
       </div>

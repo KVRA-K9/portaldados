@@ -13,7 +13,9 @@ export const dashboardRegistry: Record<string, DashboardConfig> = {
     siteUrl:
       "https://seplan.ac.gov.br/planejamento-governamental/orcamentos-tematicos/orcamento-climatico-do-estado-do-acre/",
     dashboardUrl: "https://seplan-clima.vercel.app/",
-    bannerImage: "/paineis/bi-climatico-placeholder.webp",
+    bannerImage: "/paineis/croa.jpg",
+    bannerPosition: "center 70%",
+    bannerFilter: "url(#aquarela)",
     paletteClass: "palette-climatico",
     categoryLabel: "Eixo climático",
     filters: [
@@ -133,7 +135,8 @@ export const dashboardRegistry: Record<string, DashboardConfig> = {
     siteUrl:
       "https://seplan.ac.gov.br/planejamento-governamental/orcamentos-tematicos/orcamento-crianca-e-adolescente-ocad/",
     dashboardUrl: "https://ocadac.vercel.app/",
-    bannerImage: "/paineis/bi-ocad-placeholder.webp",
+    bannerImage: "/paineis/bi-ocad-criancas.png",
+    bannerPosition: "center 25%",
     paletteClass: "palette-crianca-adolescente",
     categoryLabel: "Eixo",
     filters: [
@@ -229,7 +232,8 @@ export const dashboardRegistry: Record<string, DashboardConfig> = {
     icon: "hand-heart",
     siteUrl:
       "https://seplan.ac.gov.br/planejamento-governamental/orcamentos-tematicos/relatorio-orcamento-sensivel-ao-genero-osg/",
-    bannerImage: "/paineis/bi-osg-placeholder.webp",
+    bannerImage: "/paineis/bi-osg-mulheres.png",
+    bannerPosition: "center 28%",
     paletteClass: "palette-genero",
     // Teste: o cartão do Gênero no portal oferece o Étnico-Racial como segunda aba,
     // sob um título único que abrange os dois orçamentos.

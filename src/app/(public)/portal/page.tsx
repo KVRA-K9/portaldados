@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft, Database, Download, FileText } from "lucide-react";
-import { allDashboards, getDashboardConfig } from "@/lib/dashboards/registry";
+import { ArrowLeft, ArrowRight, Database, Download, FileText } from "lucide-react";
+import { getDashboardConfig } from "@/lib/dashboards/registry";
 import { Reveal } from "@/components/ui/reveal";
-import { DashboardBannerCard } from "@/components/dashboard/dashboard-banner-card";
-import { DashboardBannerTabs } from "@/components/dashboard/dashboard-banner-tabs";
 import { glassButton } from "@/components/dashboard/button-styles";
 
 export const metadata: Metadata = {
@@ -13,6 +11,28 @@ export const metadata: Metadata = {
 
 // As fotos dos painéis vêm do registry (`bannerImage`) e são renderizadas por
 // DashboardBannerCard, compartilhado com a home.
+
+// Faixas de fundo da "Visão Geral": as três imagens dos orçamentos, na ordem
+// em que os cartões aparecem em /portal/paineis.
+const GALERIA = [
+  "orcamento-climatico",
+  "orcamento-crianca-adolescente",
+  "orcamento-sensivel-ao-genero",
+] as const;
+
+/** Estilo de fundo da faixa, a partir do registry (bannerImage + bannerPosition).
+ *  `filtro` opcional é prefixado (ex.: "url(#aquarela)"). */
+function imagemFundo(slug: (typeof GALERIA)[number], filtro?: string) {
+  const config = getDashboardConfig(slug);
+  if (!config?.bannerImage) return undefined;
+  return {
+    backgroundImage: `url(${config.bannerImage})`,
+    backgroundSize: "cover",
+    backgroundPosition: config.bannerPosition ?? "center",
+    filter: `${filtro ? `${filtro} ` : ""}saturate(1.08) contrast(1.05)`,
+  } as const;
+}
+
 const DESTAQUES = [
   {
     icon: Database,
@@ -37,9 +57,9 @@ const DESTAQUES = [
 export default function PortalPage() {
   return (
     <div>
-      {/* Sobre o portal + Painéis temáticos compartilham UMA única imagem de fundo contínua */}
+      {/* Sobre o portal */}
       <div className="relative isolate overflow-hidden">
-        {/* Fundo das duas seções: gradiente institucional sob a foto do "Sobre o portal" */}
+        {/* Fundo: gradiente institucional sob as faixas de imagem */}
         <div
           className="absolute inset-0 -z-10"
           style={{
@@ -48,97 +68,88 @@ export default function PortalPage() {
           aria-hidden="true"
         />
 
-        {/* Sobre o portal */}
+        {/* Sobre o portal: três faixas em largura total (uma por imagem dos orçamentos),
+            com o conteúdo distribuído sobre as fotos — percorridas pela rolagem. */}
         <section id="sobre-portal" className="relative isolate scroll-mt-16">
-          {/* A foto (2400×900) cobre só esta seção: assim é exibida perto do tamanho
-              nativo, sem a ampliação que a deixava borrada ao cobrir a página inteira. */}
-          <div
-            className="absolute inset-0 -z-10"
-            style={{
-              backgroundImage: "url(/paineis/hero-topo.webp)",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              filter: "saturate(1.08) contrast(1.05)",
-            }}
-            aria-hidden="true"
-          />
-          {/* Véu escuro só o suficiente para o texto branco: mais leve no rodapé da
-              seção, onde a foto tem mais presença. */}
-          <div
-            className="absolute inset-0 -z-10"
-            style={{
-              background:
-                "linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.42) 55%, rgba(0,0,0,0.30) 100%)",
-            }}
-            aria-hidden="true"
-          />
-          <div className="mx-auto max-w-[1440px] px-4 py-14 sm:px-6">
-            <Link href="/" className={glassButton}>
-              <ArrowLeft className="size-4" aria-hidden="true" />
-              Voltar à página inicial
-            </Link>
-            <h2 className="mt-6 text-2xl font-semibold tracking-tight text-institutional-gold sm:text-3xl">
-              Sobre o Portal
-            </h2>
-            <div className="mt-8">
-              <Reveal className="max-w-3xl">
-                {/* Painel de vidro, na mesma linguagem dos cartões de destaque abaixo. */}
-                <div
-                  className="relative overflow-hidden rounded-xl p-6 ring-1 ring-institutional-gold/30 backdrop-blur-md sm:p-8"
-                  style={{
-                    background:
-                      "linear-gradient(135deg, rgba(15,23,42,0.58) 0%, rgba(2,6,23,0.62) 100%)",
-                  }}
-                >
-                  <h3 className="text-readable text-xl font-semibold tracking-tight text-white sm:text-2xl">
-                    Transparência na aplicação dos recursos públicos
-                  </h3>
-                  <div className="mt-4 space-y-4 text-justify text-white text-readable">
-                    <p>
-                      O Portal de Dados Orçamentários constitui o repositório oficial dos
-                      microdados — os dados brutos, em sua menor unidade — dos orçamentos
-                      temáticos do Estado do Acre, produzidos pelo Departamento de Estudos e
-                      Planejamento Orçamentário da Secretaria de Estado de Planejamento
-                      (SEPLAN-AC).
-                    </p>
-                    <p>
-                      Sua finalidade é assegurar a transparência na aplicação dos recursos
-                      públicos e viabilizar o uso e o reuso das informações orçamentárias — a
-                      exemplo dos orçamentos Climático e Criança e Adolescente — por gestores
-                      públicos, pesquisadores e pela sociedade civil, em consonância com os
-                      princípios da administração pública. As análises e os painéis tratados a
-                      partir desses microdados são disponibilizados nos sites de cada orçamento.
-                    </p>
-                    <p>
-                      Os dados são consolidados pela equipe técnica do Departamento a partir da
-                      planilha oficial de cada orçamento e atualizados a cada nova consolidação,
-                      assegurando a fidelidade às fontes primárias.
-                    </p>
-                    <p>
-                      Constituem dados públicos, de livre reutilização, recomendando-se a citação
-                      da fonte e a preservação de seu conteúdo original.
-                    </p>
-                  </div>
-                </div>
+          {/* Faixa 1 — Visão Geral sobre a foto do Croa em visual de desenho/aquarela,
+              dialogando com as ilustrações das demais faixas. A imagem fica levemente
+              maior (-inset) porque o filtro de deslocamento "come" as bordas. */}
+          <div className="relative overflow-hidden">
+            <div
+              className="absolute -inset-4"
+              style={imagemFundo(GALERIA[0], "url(#aquarela)")}
+              aria-hidden="true"
+            />
+            {/* Véu escuro só o suficiente para o texto branco. */}
+            <div
+              className="absolute inset-0"
+              style={{
+                background:
+                  "linear-gradient(180deg, rgba(0,0,0,0.60) 0%, rgba(0,0,0,0.45) 55%, rgba(0,0,0,0.35) 100%)",
+              }}
+              aria-hidden="true"
+            />
+            <div className="relative mx-auto flex min-h-[92vh] max-w-[1440px] flex-col px-4 py-14 sm:px-6">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <Link href="/" className={glassButton}>
+                  <ArrowLeft className="size-4" aria-hidden="true" />
+                  Voltar à página inicial
+                </Link>
+                <Link href="/portal/paineis" className={glassButton}>
+                  <ArrowRight className="size-4" aria-hidden="true" />
+                  Acessar Painéis Temáticos
+                </Link>
+              </div>
+              <h2 className="mt-6 text-3xl font-semibold tracking-tight text-institutional-gold sm:text-4xl">
+                Visão Geral
+              </h2>
+              <Reveal className="mt-10 max-w-3xl">
+                {/* Texto direto sobre a foto (com sombra), no lugar do quadro pesado. */}
+                <h3 className="text-readable text-xl font-semibold text-balance text-white drop-shadow-md sm:text-2xl">
+                  Transparência na aplicação dos recursos públicos
+                </h3>
+                <p className="mt-6 text-lg text-justify text-white drop-shadow-md text-readable sm:text-xl">
+                  O Portal de Dados Orçamentários constitui o repositório oficial dos microdados —
+                  os dados brutos, em sua menor unidade — dos orçamentos temáticos do Estado do
+                  Acre, produzidos pelo Departamento de Estudos e Planejamento Orçamentário da
+                  Secretaria de Estado de Planejamento (SEPLAN-AC).
+                </p>
+                <p className="mt-4 text-lg text-justify text-white drop-shadow-md text-readable sm:text-xl">
+                  Sua finalidade é assegurar a transparência na aplicação dos recursos públicos e
+                  viabilizar o uso e o reuso das informações orçamentárias — a exemplo dos
+                  orçamentos Climático e Criança e Adolescente — por gestores públicos,
+                  pesquisadores e pela sociedade civil, em consonância com os princípios da
+                  administração pública. As análises e os painéis tratados a partir desses
+                  microdados são disponibilizados nos sites de cada orçamento.
+                </p>
               </Reveal>
-              <div className="mt-8 grid gap-6 md:grid-cols-3">
+            </div>
+          </div>
+
+          {/* Faixa 2 — destaques sobre a imagem do orçamento Criança e Adolescente */}
+          <div className="relative overflow-hidden">
+            <div className="absolute inset-0" style={imagemFundo(GALERIA[1])} aria-hidden="true" />
+            <div
+              className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/40 to-black/30"
+              aria-hidden="true"
+            />
+            <div className="relative mx-auto flex min-h-[78vh] max-w-[1440px] items-center px-4 py-14 sm:px-6">
+              <div className="grid w-full gap-8 md:grid-cols-3">
                 {DESTAQUES.map((item, i) => (
                   <Reveal key={item.title} delay={i * 55} className="h-full">
-                    <div
-                      className="relative flex h-full flex-col overflow-hidden rounded-xl p-5 ring-1 ring-institutional-gold/30 backdrop-blur-md transition duration-300 hover:-translate-y-1 hover:shadow-xl"
-                      style={{
-                        background:
-                          "linear-gradient(135deg, rgba(15,23,42,0.58) 0%, rgba(2,6,23,0.62) 100%)",
-                      }}
-                    >
-                      {/* Ícone como marca-d'água ao fundo */}
+                    {/* Sem caixa: texto direto sobre a foto, com sombra para leitura. */}
+                    <div className="relative h-full">
                       <item.icon
                         className="pointer-events-none absolute -bottom-5 -right-4 size-32 text-white/10"
                         aria-hidden="true"
                       />
                       <div className="relative">
-                        <h3 className="font-medium text-institutional-gold">{item.title}</h3>
-                        <p className="mt-2 text-sm text-justify text-white/90">{item.description}</p>
+                        <h3 className="text-xl font-semibold text-institutional-gold drop-shadow-md sm:text-2xl">
+                          {item.title}
+                        </h3>
+                        <p className="mt-2 text-lg text-justify text-white drop-shadow-md text-readable sm:text-xl">
+                          {item.description}
+                        </p>
                       </div>
                     </div>
                   </Reveal>
@@ -146,39 +157,27 @@ export default function PortalPage() {
               </div>
             </div>
           </div>
-        </section>
 
-        {/* Painéis temáticos */}
-        <section id="paineis" className="relative scroll-mt-16 border-b">
-          <div className="mx-auto max-w-[1440px] px-4 py-14 sm:px-6">
-            <h2 className="text-2xl font-semibold tracking-tight text-institutional-gold sm:text-3xl">
-              Painéis temáticos
-            </h2>
-            <div className="mt-8">
-              <Reveal className="max-w-2xl">
-                <p className="text-sm font-medium text-justify text-white text-readable">
-                  Selecione um orçamento temático para conhecer a metodologia, a base
-                  legal e acessar os microdados de cada orçamento.
+          {/* Faixa 3 — consolidação e reuso sobre a imagem do orçamento Sensível ao Gênero */}
+          <div className="relative overflow-hidden">
+            <div className="absolute inset-0" style={imagemFundo(GALERIA[2])} aria-hidden="true" />
+            <div
+              className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/40 to-black/30"
+              aria-hidden="true"
+            />
+            <div className="relative mx-auto flex min-h-[78vh] max-w-[1440px] items-center px-4 py-14 sm:px-6">
+              <Reveal className="max-w-3xl">
+                {/* Sem caixa: texto direto sobre a foto, com sombra para leitura. */}
+                <p className="text-lg text-justify text-white drop-shadow-md text-readable sm:text-xl">
+                  Os dados são consolidados pela equipe técnica do Departamento a partir da
+                  planilha oficial de cada orçamento e atualizados a cada nova consolidação,
+                  assegurando a fidelidade às fontes primárias.
+                </p>
+                <p className="mt-4 text-lg text-justify text-white drop-shadow-md text-readable sm:text-xl">
+                  Constituem dados públicos, de livre reutilização, recomendando-se a citação da
+                  fonte e a preservação de seu conteúdo original.
                 </p>
               </Reveal>
-
-              <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                {allDashboards.map((dashboard, i) => {
-                  // Com orçamentos correlatos (companionSlugs), o cartão vira abas.
-                  const companions = (dashboard.companionSlugs ?? [])
-                    .map(getDashboardConfig)
-                    .filter((config): config is NonNullable<typeof config> => Boolean(config));
-                  return (
-                    <Reveal key={dashboard.slug} delay={i * 55} className="h-full">
-                      {companions.length > 0 ? (
-                        <DashboardBannerTabs tabs={[dashboard, ...companions]} />
-                      ) : (
-                        <DashboardBannerCard dashboard={dashboard} />
-                      )}
-                    </Reveal>
-                  );
-                })}
-              </div>
             </div>
           </div>
         </section>
